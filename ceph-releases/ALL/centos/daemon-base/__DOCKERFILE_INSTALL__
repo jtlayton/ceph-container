@@ -30,4 +30,13 @@ bash -c ' \
     REPO_URL="http://download.ceph.com/rpm-${CEPH_VERSION}/el__ENV_[BASEOS_TAG]__/"; \
   fi && \
   rpm -Uvh "$REPO_URL/noarch/ceph-release-1-${RELEASE_VER}.el__ENV_[BASEOS_TAG]__.noarch.rpm" ' && \
-yum install -y __CEPH_BASE_PACKAGES__
+yum install -y __CEPH_BASE_PACKAGES__ && \
+#
+# HACK: This copr repo has unofficial centos7 packages for python-kubernetes.
+#	For now we enable it install python-kubernetes manually. Eventually we
+#	should add python-kubernetes to epel and a Requires: to the ceph-mgr
+#	package.
+#
+yum install -y yum-plugin-copr && \
+yum -y copr enable '@ansible-service-broker/ansible-service-broker-latest' && \
+yum install -y python-kubernetes
